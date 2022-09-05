@@ -16,9 +16,9 @@ export class AuthService {
   async login(username: string, password: string): Promise<any> {
     const user = await this.userService.findByUsername(username);
 
-    const isValidPassword = await bcrypt.compare(password, user.password);
-
     if (!user) throw new ForbiddenException('Access Denied');
+
+    const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
       throw new ForbiddenException('Access Denied');
