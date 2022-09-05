@@ -1,22 +1,47 @@
 import { UserService } from './user.service';
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { RegisterDto } from '../dto/register.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService, private jwt: JwtService) {}
+  constructor(
+    private userService: UserService,
+    private jwt: JwtService,
+    private configService: ConfigService,
+  ) {}
 
   async login(username: string, password: string): Promise<any> {
     const user = await this.userService.findByUsername(username);
 
-    if (user && user.password === bcrypt.hash(password)) {
-      return this.jwt.signAsync({
-        sub: user.id,
-        username: user.username,
-      });
+    const isValidPassword = await bcrypt.compare(password, user.password);
+
+    if (!user) throw new ForbiddenException('Access Denied');
+
+    if (!isValidPassword) {
+      throw new ForbiddenException('Access Denied');
     }
 
-    return { status: 404 };
+    const access_token = await this.generateToken({
+      sub: user.id,
+      username: user.username,
+    });
+
+    return {
+      access_token,
+      username: user.username,
+    };
+  }
+
+  async register(body: RegisterDto) {
+    return this.userService.createUser(body);
+  }
+
+  async generateToken(payload) {
+    return this.jwt.signAsync(payload, {
+      secret: this.configService.get('JWT_SECRET'),
+    });
   }
 }
