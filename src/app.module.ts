@@ -30,7 +30,7 @@ import { PollService } from './services/poll.service';
       synchronize: true,
       logging: false,
     }),
-    TypeOrmModule.forFeature([User, Poll]),
+    TypeOrmModule.forFeature([User, Poll, Option, Vote]),
   ],
   controllers: [AuthController, PollController],
   providers: [AuthService, UserService, PollService, JwtStrategy],

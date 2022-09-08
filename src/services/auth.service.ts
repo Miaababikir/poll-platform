@@ -2,8 +2,8 @@ import { UserService } from './user.service';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { RegisterDto } from '../dto/register.dto';
 import { ConfigService } from '@nestjs/config';
+import { AuthDto } from '../dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +25,7 @@ export class AuthService {
     }
 
     const access_token = await this.generateToken({
-      sub: user.id,
+      id: user.id,
       username: user.username,
     });
 
@@ -35,7 +35,7 @@ export class AuthService {
     };
   }
 
-  async register(body: RegisterDto) {
+  async register(body: AuthDto) {
     return this.userService.createUser(body);
   }
 
