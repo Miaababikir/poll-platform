@@ -3,6 +3,7 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
+  Param,
   ParseIntPipe,
   Post,
   Query,
@@ -14,10 +15,14 @@ import { CreatePollDto } from '../dto/createPoll.dto';
 import { PollService } from '../services/poll.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Pagination } from 'nestjs-typeorm-paginate';
+import { VoteService } from '../services/vote.service';
 
 @Controller('/api/polls')
 export class PollController {
-  constructor(private pollService: PollService) {}
+  constructor(
+    private pollService: PollService,
+    private voteService: VoteService,
+  ) {}
 
   @Get()
   index(
@@ -31,5 +36,16 @@ export class PollController {
   @UseGuards(AuthGuard('jwt'))
   store(@Body() createPollDto: CreatePollDto, @Req() request) {
     return this.pollService.createPoll(createPollDto, request.user);
+  }
+
+  @Get('/:id')
+  @UseGuards(AuthGuard('jwt'))
+  view(@Param('id') id: number, @Req() request) {
+    return this.pollService.findById(id, request.user.id);
+  }
+
+  @Get('/:id/votes/totals')
+  getPollVotesTotal(@Param('id') id: number) {
+    return this.voteService.getPollVotes(id);
   }
 }

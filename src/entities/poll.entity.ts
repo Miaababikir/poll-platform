@@ -1,22 +1,15 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { User } from './user.entity';
 import { Option } from './option.entity';
+import { Base } from './base.entity';
 
 @Entity()
-export class Poll {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Poll extends Base {
   @Column()
   title: string;
+
+  @Column({ nullable: true })
+  userId: number;
 
   @ManyToOne(() => User, (user) => user.polls)
   user: User;
@@ -26,10 +19,4 @@ export class Poll {
 
   @Column('date')
   expireAt;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

@@ -12,6 +12,9 @@ import { AuthService } from './services/auth.service';
 import { UserService } from './services/user.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PollService } from './services/poll.service';
+import { VoteService } from './services/vote.service';
+import { VoteController } from './controllers/vote.controller';
+import { ProfileController } from './controllers/profile.controller';
 
 @Module({
   imports: [
@@ -28,11 +31,16 @@ import { PollService } from './services/poll.service';
       database: process.env.DB_DATABASE,
       entities: [User, Poll, Option, Vote],
       synchronize: true,
-      logging: false,
+      logging: true,
     }),
     TypeOrmModule.forFeature([User, Poll, Option, Vote]),
   ],
-  controllers: [AuthController, PollController],
-  providers: [AuthService, UserService, PollService, JwtStrategy],
+  controllers: [
+    AuthController,
+    PollController,
+    VoteController,
+    ProfileController,
+  ],
+  providers: [AuthService, UserService, PollService, VoteService, JwtStrategy],
 })
 export class AppModule {}

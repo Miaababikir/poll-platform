@@ -1,27 +1,22 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Poll } from './poll.entity';
+import { Base } from './base.entity';
+import { Vote } from './vote.entity';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 @Entity()
-export class Option {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Option extends Base {
   @Column()
+  @IsString()
+  @IsNotEmpty()
   title: string;
+
+  @Column({ nullable: true })
+  pollId: number;
 
   @ManyToOne(() => Poll, (poll) => poll.options)
   poll: Poll;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @OneToMany(() => Vote, (vote) => vote.option)
+  votes: Vote[];
 }
