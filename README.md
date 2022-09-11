@@ -24,3 +24,7 @@ cp .env.example .env
 npm run seed
 ```
 8. Now you are good to go :fire: .
+9. Start the server
+```sh
+npm run start:dev
+```
